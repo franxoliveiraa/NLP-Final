@@ -22,7 +22,7 @@ Second, we will train a BERT model on subtitle texts labeled with the appropriat
 Evaluation: 	
 For the primary quantitative analysis, the performance of the BERT model in classifying the two test sets will be directly compared. A difference in model performance when using text that closely captures a cluster’s topic will reveal if the cluster, which is determined based on content similarity across all movies, is in any way indicative of the movie’s decade of origin. We will also analyze each of the clusters to determine what the overarching topics of each seem to be, and we will attempt to draw cultural conclusions about each time period from the clusters if they seem to be correlated with movies from certain decades.
 
-	In regards to qualitative analysis, we aim to graphically represent our clustering over social and historical phenomena, providing both a general overview of film sentiment through the past century, and a narrowed view of film sentiment per decade. 
+In regards to qualitative analysis, we aim to graphically represent our clustering over social and historical phenomena, providing both a general overview of film sentiment through the past century, and a narrowed view of film sentiment per decade. 
 
 
 
