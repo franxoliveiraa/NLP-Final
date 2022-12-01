@@ -3,12 +3,36 @@ import re
 
 path = '/Users/gracewagner/Desktop/nlp/project'
 
-### Read metadata into dataframe from excel file
-# data = pd.read_excel(r'/Users/gracewagner/Desktop/nlp/project/sources_movies.xlsx', sheet_name='Sheet1')
-# df = pd.DataFrame(data, columns=['textID','title','year','country','genre'])
-# movie_ids = df['textID'].tolist()
-# movie_countries = df['country'].tolist()
-# id_to_country = dict(zip(movie_ids, movie_countries))
+## Read metadata into dataframe from excel file
+data = pd.read_excel(r'/Users/gracewagner/Desktop/nlp/project/sources_movies.xlsx', sheet_name='Sheet1')
+df = pd.DataFrame(data, columns=['textID','title','year','country','genre'])
+movie_ids = df['textID'].tolist()
+movie_countries = df['country'].tolist()
+movie_titles = df['title'].tolist()
+movie_genre = df['genre'].tolist()
+id_to_country = dict(zip(movie_ids, movie_countries))
+id_to_title = dict(zip(movie_ids, movie_titles))
+id_to_genre = dict(zip(movie_ids, movie_genre))
+
+def get_decade(year):
+    if 1930 <= int(year) <= 1939:
+        return("1930s")
+    elif 1940 <= int(year) <= 1949:
+        return("1940s")
+    elif 1950 <= int(year) <= 1959:
+        return("1950s")
+    elif 1960 <= int(year) <= 1969:
+        return("1960s")
+    elif 1970 <= int(year) <= 1979:
+        return("1970s")
+    elif 1980 <= int(year) <= 1989:
+        return("1980s")
+    elif 1990 <= int(year) <= 1999:
+        return("1990s")
+    elif 2000 <= int(year) <= 2009:
+        return("2000s")
+    else:
+        return("2010s")
 
 def get_movies():
     prev_id = 0
@@ -49,7 +73,7 @@ def get_movies():
     print("COUNT: " + str(len(movies)))
     return movies
 
-def get_decades():
+def count_decades():
     thirties = []
     fourties = []
     fifties = []
@@ -100,8 +124,30 @@ def get_decades():
     print("00s: " + str(len(oughts)))
     print("10s: " + str(len(tens)))
 
+def get_meta():
+    metadata = []
+    with open(path + '/NLP-Final/subtitles_data', 'r') as f:
+        for line in f:
+            match = re.search(r"^\*\*\*[0-9]+\,[0-9]+\,[0-9]+\*\*\*$", line)
+            if match:
+                line=line.strip('*').split(',')
+                id = int(line[0])
+                year = int(line[1])
+                title = str(id_to_title.get(id))
+                if not title:
+                    print(line)
+                genre = str(id_to_genre.get(id))
+                decade = get_decade(year)
+                movie_meta = [id, title, year, decade, genre]
+                metadata.append(movie_meta)
+    df = pd.DataFrame(metadata, columns=['textID','title','year','decade','genre'])
+    df.to_excel("movie_metadata.xlsx", index=False)
+
+
+
 
 # movie_list = get_movies()
-get_decades()
+# count_decades()
+get_meta()
 
             
