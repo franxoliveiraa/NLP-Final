@@ -1,18 +1,20 @@
+import nltk
 import pandas as pd
 import re
 
 path = '/Users/gracewagner/Desktop/nlp/project'
 
-## Read metadata into dataframe from excel file
-data = pd.read_excel(r'/Users/gracewagner/Desktop/nlp/project/sources_movies.xlsx', sheet_name='Sheet1')
-df = pd.DataFrame(data, columns=['textID','title','year','country','genre'])
-movie_ids = df['textID'].tolist()
-movie_countries = df['country'].tolist()
-movie_titles = df['title'].tolist()
-movie_genre = df['genre'].tolist()
-id_to_country = dict(zip(movie_ids, movie_countries))
-id_to_title = dict(zip(movie_ids, movie_titles))
-id_to_genre = dict(zip(movie_ids, movie_genre))
+# Read metadata into dataframe from excel file
+def read_all_meta():
+    data = pd.read_excel(r'/Users/gracewagner/Desktop/nlp/project/sources_movies.xlsx', sheet_name='Sheet1')
+    df = pd.DataFrame(data, columns=['textID','title','year','country','genre'])
+    movie_ids = df['textID'].tolist()
+    movie_countries = df['country'].tolist()
+    movie_titles = df['title'].tolist()
+    movie_genre = df['genre'].tolist()
+    id_to_country = dict(zip(movie_ids, movie_countries))
+    id_to_title = dict(zip(movie_ids, movie_titles))
+    id_to_genre = dict(zip(movie_ids, movie_genre))
 
 def get_decade(year):
     if 1930 <= int(year) <= 1939:
@@ -143,11 +145,23 @@ def get_meta():
     df = pd.DataFrame(metadata, columns=['textID','title','year','decade','genre'])
     df.to_excel("movie_metadata.xlsx", index=False)
 
+def token_subs():
+    with open(path + '/NLP-Final/subtitles_data', 'r') as file, open(path + '/NLP-Final/tok_subtitles_data', 'w') as tok_file:
+        for line in file:
+            line = line.rstrip()
+            line = re.sub(r"^\-+", r"", line)
+            match = re.search(r"^\*\*\*[0-9]+\,[0-9]+\,[0-9]+\*\*\*$", line)
+            if match:
+                continue
+            toks = nltk.word_tokenize(line)
+            for token in toks:
+                tok_file.write("{t} ".format(t=token))
+            tok_file.write("\n")
 
-
-
+# read_all_meta()
 # movie_list = get_movies()
 # count_decades()
-get_meta()
+# get_meta()
+token_subs()
 
             
