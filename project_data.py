@@ -2,20 +2,22 @@ import nltk
 import pandas as pd
 import re
 
+## Functions in this file perform preliminary data cleaning, labeling, and tokenizing
+
 path = '/Users/gracewagner/Desktop/nlp/project'
 
 # Read metadata into dataframe from excel file
-def read_all_meta():
-    data = pd.read_excel(r'/Users/gracewagner/Desktop/nlp/project/sources_movies.xlsx', sheet_name='Sheet1')
-    df = pd.DataFrame(data, columns=['textID','title','year','country','genre'])
-    movie_ids = df['textID'].tolist()
-    movie_countries = df['country'].tolist()
-    movie_titles = df['title'].tolist()
-    movie_genre = df['genre'].tolist()
-    id_to_country = dict(zip(movie_ids, movie_countries))
-    id_to_title = dict(zip(movie_ids, movie_titles))
-    id_to_genre = dict(zip(movie_ids, movie_genre))
+data = pd.read_excel(r'/Users/gracewagner/Desktop/nlp/project/sources_movies.xlsx', sheet_name='Sheet1')
+df = pd.DataFrame(data, columns=['textID','title','year','country','genre'])
+movie_ids = df['textID'].tolist()
+movie_countries = df['country'].tolist()
+movie_titles = df['title'].tolist()
+movie_genre = df['genre'].tolist()
+id_to_country = dict(zip(movie_ids, movie_countries))
+id_to_title = dict(zip(movie_ids, movie_titles))
+id_to_genre = dict(zip(movie_ids, movie_genre))
 
+# Convert year to decade string
 def get_decade(year):
     if 1930 <= int(year) <= 1939:
         return("1930s")
@@ -36,6 +38,7 @@ def get_decade(year):
     else:
         return("2010s")
 
+# Link unlabeled movie text to movie metadata, write subtitles with movie labels to new file
 def get_movies():
     prev_id = 0
     count = 0
@@ -75,6 +78,7 @@ def get_movies():
     print("COUNT: " + str(len(movies)))
     return movies
 
+# Count number of movies from each decade in original dataset
 def count_decades():
     thirties = []
     fourties = []
@@ -126,6 +130,7 @@ def count_decades():
     print("00s: " + str(len(oughts)))
     print("10s: " + str(len(tens)))
 
+# Write metadata for every movie in original dataset to new excel file
 def get_meta():
     metadata = []
     with open(path + '/NLP-Final/subtitles_data', 'r') as f:
@@ -145,6 +150,7 @@ def get_meta():
     df = pd.DataFrame(metadata, columns=['textID','title','year','decade','genre'])
     df.to_excel("movie_metadata.xlsx", index=False)
 
+# Tokenize each line and write to new file
 def token_subs():
     with open(path + '/NLP-Final/subtitles_data', 'r') as file, open(path + '/NLP-Final/tok_subtitles_data', 'w') as tok_file:
         for line in file:
@@ -158,7 +164,6 @@ def token_subs():
                 tok_file.write("{t} ".format(t=token))
             tok_file.write("\n")
 
-# read_all_meta()
 # movie_list = get_movies()
 # count_decades()
 # get_meta()
