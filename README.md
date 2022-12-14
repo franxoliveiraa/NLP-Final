@@ -21,10 +21,16 @@ English Corpora: https://www.english-corpora.org/
 OpenSubtitles.org: https://www.opensubtitles.org/en/search/subs
 
 Method: 
+First, we build a word2vec using the subtitles from all 13,430 movies in the original dataset. This generates a vector representation of every word in the model's vocabulary. We then calculate the vector representation of every movie in the sample (4,050 movies) by summing the word vectors for each word in the movie, and the movie vectors are grouped into 30 clusters through K-means clustering. We analyze the time periods and genres of the movies in each cluster to see if the clustering algorithm has grouped them according to either of these features.
 
+Next, for all movies in a given cluster we calculate vector representations for every individual subtitle/line and determine the lines that have the closest cosine distance to the center of the cluster. These lines for each cluster are compiled in a single file to serve as a test set for the next stage of the project.
+
+Finally, we fine-tune a BERT model (specifically distilBERT) to classify a movie's decade from a single subtitle using a training set of 500,000 subtitles labeled with the decade. We then test the fine-tuned BERT model on two test sets, one with randomly selected lines and the other with lines closest to the cluster centers, containing 5,000 lines each. We compare the performance of BERT on classifying data from the two test sets to determine if clustering picked up on features common among movies from the same decade that make it easier for the model to classify correctly.
 
 Conclusions: 	
+Even though the movies in some of the clusters seem to be grouped randomly and not have consistent themes/time periods, many of them were clearly grouped by decade and/or genre to some degree. We also saw that some genres seemed to be more popular in some time periods than others.
 
+For the BERT model, the overall performance in classifying the movie decade from a single subtitle was relatively poor. However, this is unsurprising since the model was required to classify the decade for some very short or nondescript lines, which would be difficult to get correct. Notably, the model did consistently perform better when classifying the cluster-aligned subtitles than the random subtitles, and it performed much better when classifying lines from the first and last decades of the sample (1930s and 2010s). This suggests that there are semantic similarities among film dialogue from the same time period, and that the content of movie dialogue has changed over time.
 
 
 
